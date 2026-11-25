@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Oracle & Poèmes des 256 Odu Ifá</title>
+  <style>
+    :root {
+      --bg: #14110f;
+      --panel: #1f1a16;
+      --border: #3d3126;
+      --gold: #d4a359;
+      --gold-light: #f0cc8c;
+      --text: #ece6df;
+      --muted: #a69b8d;
+      --accent: #8c3b2b;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    header {
+      text-align: center;
+      padding: 2rem 1rem 1.2rem;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, #1b1612 0%, #14110f 100%);
+    }
+
+    header h1 {
+      margin: 0;
+      color: var(--gold);
+      letter-spacing: 1px;
+      font-size: 1.9rem;
+    }
+
+    header p {
+      margin: 0.4rem 0 0;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    .container {
+      max-width: 1050px;
+      margin: 1.5rem auto;
+      padding: 0 1rem 3rem;
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 820px) {
+      .container { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.3rem;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    }
+
+    button {
+      background: var(--gold);
+      color: #14110f;
+      border: none;
+      padding: 0.7rem 1.1rem;
+      font-weight: bold;
+      font-family: inherit;
+      font-size: 0.95rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    button:hover { background: var(--gold-light); }
+    button:active { transform: scale(0.98); }
+
+    button.secondary {
+      background: transparent;
+      color: var(--gold);
+      border: 1px solid var(--gold);
+    }
+
+    button.secondary:hover {
+      background: rgba(212, 163, 89, 0.12);
+    }
+
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    select, input[type="text"], textarea {
+      width: 100%;
+      background: #130f0d;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.6rem;
+      font-family: inherit;
+      font-size: 0.95rem;
+    }
+
+    textarea {
+      min-height: 210px;
+      resize: vertical;
+      line-height: 1.65;
+    }
+
+    /* Tableau divinatoire (Opon Ifa) */
+    .opon {
+      margin-top: 1.2rem;
+      padding: 1.2rem;
+      border: 2px solid var(--gold);
+      border-radius: 50% / 14%;
+      background: #171310;
+      text-align: center;
+    }
+
+    .opon-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--muted);
+      margin-bottom: 0.6rem;
+    }
+
+    .legs-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .odu-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.55rem 1.2rem;
+      font-family: "Courier New", monospace;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--gold-light);
+      padding: 0.5rem 0;
+    }
+
+    .odu-meta {
+      margin-top: 0.8rem;
+      font-size: 0.88rem;
+      color: var(--muted);
+      border-top: 1px dashed var(--border);
+      padding-top: 0.7rem;
+    }
+
+    .badge {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.75rem;
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      margin-bottom: 0.4rem;
+    }
+
+    .odu-heading {
+      margin: 0.2rem 0 0.8rem;
+      color: var(--gold-light);
+      font-size: 1.55rem;
+    }
+
+    .field-label {
+      display: block;
+      margin: 0.9rem 0 0.35rem;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--gold);
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 1rem;
+    }
+
+    .status {
+      margin-top: 0.6rem;
+      font-size: 0.85rem;
+      color: #8fd19e;
+      min-height: 1.2em;
+    }
+
+    .status.error {
+      color: #f28b82;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Ọpọ́n Ifá — Générateur de Poèmes des 256 Odu</h1>
+  <p>Lancer l'Ọ̀pẹ̀lẹ̀, explorer les 256 signes et composer des Ẹsẹ adaptés</p>
+</header>
+
+<div class="container">
+  <!-- Colonne Gauche : Tirage & Opon -->
+  <aside class="card">
+    <div class="controls">
+      <button type="button" id="btn-cast">🎲 Lancer l'Ọ̀pẹ̀lẹ̀ (Tirage aléatoire)</button>
+
+      <div>
+        <label class="field-label" for="odu-select">Ou choisir parmi les 256 Odu :</label>
+        <select id="odu-select"></select>
+      </div>
+
+      <div>
+        <label class="field-label" for="theme-input">Intention / Thème du poème (optionnel) :</label>
+        <input type="text" id="theme-input" placeholder="Ex: sagesse, voyage, patience, renouveau..." />
+      </div>
+
+      <button type="button" class="secondary" id="btn-generate">✨ Générer un poème adapté</button>
+    </div>
+
+    <div class="opon">
+      <div class="opon-title">Tracé de l'Odu</div>
+      <div class="legs-header">
+        <span>Gauche (2e)</span>
+        <span>Droite (1ère)</span>
+      </div>
+      <div class="odu-grid" id="odu-marks"></div>
+      <div class="odu-meta" id="odu-roots"></div>
+    </div>
+  </aside>
+
+  <!-- Colonne Droite : Poème & Édition -->
+  <main class="card">
+    <span class="badge" id="odu-type">Oju Odu</span>
+    <h2 class="odu-heading" id="odu-title">1. Eji Ogbe</h2>
+
+    <label class="field-label" for="yoruba-verse">Invocation / Verset racine (Yorùbá)</label>
+    <input type="text" id="yoruba-verse" />
+
+    <label class="field-label" for="poem-editor">Poème divinatoire (Ẹsẹ adapté en français)</label>
+    <textarea id="poem-editor"></textarea>
+
+    <div class="toolbar">
+      <button type="button" id="btn-save">💾 Sauvegarder ce poème</button>
+      <button type="button" class="secondary" id="btn-copy">📋 Copier le poème</button>
+      <button type="button" class="secondary" id="btn-copy-yoruba">📋 Copier l'invocation</button>
+      <button type="button" class="secondary" id="btn-export">⬇️ Exporter les 256 Odu (JSON)</button>
+    </div>
+    <div class="status" id="status-msg"></div>
+  </main>
+</div>
+
+<script>
+  const OJU_ODU = [
+    {
+      nom: "Eji Ogbe", lignes: [1,1,1,1],
+      yoruba: "Kùtùkùtù òwúrọ̀ la ti ń rí ojú ọjọ́. Dífá fún Ọ̀rúnmìlà.",
+      force: "la clarté de l'aube qui dissipe l'ombre",
+      image: "le chemin royal ouvert devant le marcheur droit",
+      conseil: "aligne ta parole et tes actes avec ton Orí"
+    },
+    {
+      nom: "Oyeku Meji", lignes: [2,2,2,2],
+      yoruba: "Òyèkú méjì ni baba ikú. A dífá fún Ọ̀rúnmìlà.",
+      force: "la nuit profonde où germent les transformations silencieuses",
+      image: "le voile du crépuscule qui protège ce qui mûrit",
+      conseil: "honore la mémoire des anciens et avance avec prudence"
+    },
+    {
+      nom: "Iwori Meji", lignes: [2,1,1,2],
+      yoruba: "Ojú tó rí ibi kò ní rí ikú. A dífá fún Ìwòrì.",
+      force: "le regard intérieur qui perce les illusions",
+      image: "le miroir d'eau calme reflétant la vérité cachée",
+      conseil: "observe longuement avant de trancher"
+    },
+    {
+      nom: "Odi Meji", lignes: [1,2,2,1],
+      yoruba: "Òdí méjì a dí ibi, a ṣí ire. Dífá fún Ọ̀rúnmìlà.",
+      force: "la matrice close qui enfante un nouveau cycle",
+      image: "la porte verrouillée au malheur et ouverte à la vie",
+      conseil: "protège ton sanctuaire intérieur et achève ce qui est commencé"
+    },
+    {
+      nom: "Irosun Meji", lignes: [1,1,2,2],
+      yoruba: "Ìròsùn méjì, a dífá fún Ọ̀rúnmìlà níjó tí ojú ń pọ́n ọ́n.",
+      force: "la braise rouge qui résiste sous la cendre",
+      image: "le bois sacré d'Osun qui teint l'étoffe de dignité",
+      conseil: "demeure ferme dans l'épreuve, la vérité finira par luire"
+    },
+    {
+      nom: "Owonrin Meji", lignes: [2,2,1,1],
+      yoruba: "Ọ̀wọ́nrín ṣọ̀gbọ́n, Ọ̀wọ́nrín ṣògo. A dífá fún Èṣù Ọ̀dàrà.",
+      force: "le souffle imprévisible du carrefour",
+      image: "la roue qui tourne soudainement au croisement des routes",
+      conseil: "reste souple face au changement et apaise Èṣù"
+    },
+    {
+      nom: "Obara Meji", lignes: [1,2,2,2],
+      yoruba: "Ọ̀bàrà méjì kò ṣe é fọwọ́ rọ́ sẹ́yìn. Dífá fún Ọ̀bàrà.",
+      force: "la parole féconde qui attire l'abondance",
+      image: "la calebasse modeste qui révèle des trésors insoupçonnés",
+      conseil: "tiens tes promesses et garde l'humilité dans le succès"
+    },
+    {
+      nom: "Okanran Meji", lignes: [2,2,2,1],
+      yoruba: "Ọ̀kànràn kan ṣoṣo ló dá ayé sílẹ̀. Dífá fún Ṣàngó.",
+      force: "l'étincelle décisive qui éveille le monde",
+      image: "le tonnerre de Ṣàngó qui rétablit l'équilibre",
+      conseil: "agis avec droiture sans céder à l'emportement"
+    },
+    {
+      nom: "Ogunda Meji", lignes: [1,1,1,2],
+      yoruba: "Ògúndá méjì, Ògún ló ni irin. Dífá fún Ògún.",
+      force: "le fer forgé qui trace un sentier dans la forêt",
+      image: "la lame d'Ògún ouvrant la voie aux bâtisseurs",
+      conseil: "tranche l'hésitation par un labeur courageux"
+    },
+    {
+      nom: "Osa Meji", lignes: [2,1,1,1],
+      yoruba: "Ọ̀sá méjì, afẹ́fẹ́ lẹ́lẹ́ tí ń fẹ́ igi oko. Dífá fún Ọya.",
+      force: "le vent impétueux d'Ọya qui balaie l'ancien",
+      image: "la bourrasque qui courbe le roseau sans le rompre",
+      conseil: "rassemble ton courage face aux bouleversements"
+    },
+    {
+      nom: "Ika Meji", lignes: [2,1,2,2],
+      yoruba: "Ìká méjì, ẹni tó bá ṣe rere yóò rí rere.",
+      force: "la vigilance sereine face aux détours du monde",
+      image: "le cercle sacré qui neutralise les intentions troubles",
+      conseil: "cultive la droiture : le bien semé revient toujours à sa source"
+    },
+    {
+      nom: "Oturupon Meji", lignes: [2,2,1,2],
+      yoruba: "Òtúúrúpọ̀n méjì, ilẹ̀ ló gbé gbogbo wa ró. Dífá fún Onílẹ̀.",
+      force: "la puissance nourricière et stable de la Terre",
+      image: "les racines profondes de l'iroko ancrées dans le sol",
+      conseil: "prends soin de ton corps, de ton foyer et de tes fondations"
+    },
+    {
+      nom: "Otura Meji", lignes: [1,2,1,1],
+      yoruba: "Òtúrá méjì, àlàáfíà ni ti Ọlọ́run. Dífá fún Imọ̀lẹ̀.",
+      force: "la paix céleste qui apaise les querelles",
+      image: "le rayon de lumière traversant les nuages",
+      conseil: "cherche la concorde et élève ton esprit"
+    },
+    {
+      nom: "Irete Meji", lignes: [1,1,2,1],
+      yoruba: "Ìrẹtẹ̀ méjì, ẹni tó tẹ ara rẹ̀ mọ́lẹ̀ kò ní ṣubú.",
+      force: "la discipline humble qui rend inébranlable",
+      image: "le pas mesuré du sage qui ne trébuche jamais",
+      conseil: "l'humilité et la persévérance scellent ta réussite"
+    },
+    {
+      nom: "Ose Meji", lignes: [1,2,1,2],
+      yoruba: "Ọ̀ṣẹ́ méjì, òjò kò ní rọ̀ kí ilẹ̀ má tutù. Dífá fún Ọ̀ṣun.",
+      force: "la douceur de l'eau vive qui polit la pierre",
+      image: "la source d'Ọ̀ṣun apportant grâce et fertilité",
+      conseil: "triomphe par la délicatesse, l'art et la diplomatie"
+    },
+    {
+      nom: "Ofun Meji", lignes: [2,1,2,1],
+      yoruba: "Òfún méjì, ẹfun ló funfun jù. Dífá fún Ọbàtálá.",
+      force: "la pureté du linge blanc d'Ọbàtálá",
+      image: "la clarté silencieuse qui attire les bénédictions",
+      conseil: "garde le cœur pur, patient et généreux"
+    }
+  ];
+
+  const STORAGE_KEY = "ifa_256_poemes_v1";
+  let corpus256 = [];
+  let currentIndex = 0;
+
+  function buildInitialCorpus() {
+    const list = [];
+    let id = 1;
+    for (const d of OJU_ODU) {
+      for (const g of OJU_ODU) {
+        const isMeji = d.nom === g.nom;
+        let nomD = d.nom.split(" ")[0];
+        let nomG = g.nom.split(" ")[0];
+        if (!isMeji && nomD === "Eji") nomD = "Ogbe";
+
+        const nomComplet = isMeji ? d.nom : `${nomD}-${nomG}`;
+        list.push({
+          id: id++,
+          nom: nomComplet,
+          type: isMeji ? "Oju Odu (Majeur)" : "Amulu Odu (Composé)",
+          droite: d,
+          gauche: g,
+          yoruba: isMeji ? d.yoruba : `${nomComplet} — ${d.yoruba}`,
+          poeme: ""
+        });
+      }
+    }
+    return list;
+  }
+
+  function loadCorpus() {
+    corpus256 = buildInitialCorpus();
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        parsed.forEach((item, idx) => {
+          if (corpus256[idx]) {
+            if (item.yoruba) corpus256[idx].yoruba = item.yoruba;
+            if (item.poeme) corpus256[idx].poeme = item.poeme;
+          }
+        });
+      }
+    } catch (e) {
+      console.warn("Stockage local indisponible :", e);
+    }
+
+    corpus256.forEach((odu) => {
+      if (!odu.poeme) {
+        odu.poeme = composePoem(odu, "");
+      }
+    });
+  }
+
+  function composePoem(odu, theme) {
+    const d = odu.droite;
+    const g = odu.gauche;
+    const isMeji = d.nom === g.nom;
+    const sujet = theme.trim()
+      ? `celui qui interroge l'oracle au sujet de « ${theme.trim()} »`
+      : `celui qui se tient devant l'Ọpọ́n Ifá en quête de voie`;
+
+    if (isMeji) {
+      return [
+        `Ainsi parle ${odu.nom}, pilier souverain du destin :`,
+        `« C'est ${d.force},`,
+        `Comme ${d.image}. »`,
+        ``,
+        `Divination fut faite pour ${sujet}.`,
+        `On lui dit : « Offre la patience de ton cœur et la droiture de tes mains,`,
+        `Car ce qui est enraciné dans la vérité ne craint pas la tempête. »`,
+        ``,
+        `Enseignement d'Ifá :`,
+        `${d.conseil.charAt(0).toUpperCase() + d.conseil.slice(1)}.`,
+        `Àṣẹ.`
+      ].join("\n");
+    }
+
+    return [
+      `Quand ${d.nom} s'avance à droite et rencontre ${g.nom} à gauche,`,
+      `Naît le signe ${odu.nom}.`,
+      ``,
+      `« À l'origine se tient ${d.force},`,
+      `Mais à l'horizon répond ${g.force} ;`,
+      `Tel ${d.image},`,
+      `Qui rejoint ${g.image}. »`,
+      ``,
+      `Divination fut faite pour ${sujet}.`,
+      `Les anciens lui dirent :`,
+      `« Ne sépare pas l'élan du premier pas de la sagesse du dénouement ;`,
+      `Unis la force de ${d.nom} à la mesure de ${g.nom}. »`,
+      ``,
+      `Enseignement d'Ifá :`,
+      `${d.conseil.charAt(0).toUpperCase() + d.conseil.slice(1)},`,
+      `Et ${g.conseil}.`,
+      `Àṣẹ.`
+    ].join("\n");
+  }
+
+  // Fonction de copie universelle (fonctionne en HTTPS, HTTP et fichier local file://)
+  async function copyTextUniversally(text, btnElement, originalLabel) {
+    let copied = false;
+
+    // 1. Tentative via l'API moderne Clipboard
+    if (navigator.clipboard && window.isSecureContext) {
+      try {
+        await navigator.clipboard.writeText(text);
+        copied = true;
+      } catch (err) {
+        copied = false;
+      }
+    }
+
+    // 2. Solution de repli fiable pour les fichiers locaux (file://) ou navigateurs restrictifs
+    if (!copied) {
+      const tempArea = document.createElement("textarea");
+      tempArea.value = text;
+      tempArea.setAttribute("readonly", "");
+      tempArea.style.position = "fixed";
+      tempArea.style.top = "0";
+      tempArea.style.left = "-9999px";
+      document.body.appendChild(tempArea);
+      tempArea.focus();
+      tempArea.select();
+      tempArea.setSelectionRange(0, tempArea.value.length);
+
+      try {
+        copied = document.execCommand("copy");
+      } catch (err) {
+        copied = false;
+      }
+      document.body.removeChild(tempArea);
+    }
+
+    if (copied) {
+      showStatus("Texte copié dans le presse-papiers !");
+      if (btnElement) {
+        btnElement.textContent = "✅ Copié !";
+        setTimeout(() => { btnElement.textContent = originalLabel; }, 2000);
+      }
+    } else {
+      // 3. Dernier recours : sélection directe dans l'éditeur pour Ctrl+C
+      const editor = document.getElementById("poem-editor");
+      editor.focus();
+      editor.select();
+      showStatus("Copie automatique bloquée par le navigateur : le texte est sélectionné, appuyez sur Ctrl+C (ou Cmd+C).", true);
+    }
+  }
+
+  function renderOdu(index) {
+    currentIndex = index;
+    const odu = corpus256[index];
+
+    document.getElementById("odu-select").value = index;
+    document.getElementById("odu-type").textContent = odu.type;
+    document.getElementById("odu-title").textContent = `${odu.id}. ${odu.nom}`;
+    document.getElementById("yoruba-verse").value = odu.yoruba;
+    document.getElementById("poem-editor").value = odu.poeme;
+
+    const marksContainer = document.getElementById("odu-marks");
+    marksContainer.innerHTML = "";
+    for (let i = 0; i < 4; i++) {
+      const cellG = document.createElement("div");
+      cellG.textContent = odu.gauche.lignes[i] === 1 ? "I" : "II";
+      const cellD = document.createElement("div");
+      cellD.textContent = odu.droite.lignes[i] === 1 ? "I" : "II";
+      marksContainer.appendChild(cellG);
+      marksContainer.appendChild(cellD);
+    }
+
+    document.getElementById("odu-roots").innerHTML =
+      `Droite : <strong>${odu.droite.nom}</strong><br>Gauche : <strong>${odu.gauche.nom}</strong>`;
+    document.getElementById("status-msg").textContent = "";
+  }
+
+  function populateSelect() {
+    const select = document.getElementById("odu-select");
+    corpus256.forEach((odu, idx) => {
+      const opt = document.createElement("option");
+      opt.value = idx;
+      opt.textContent = `${odu.id}. ${odu.nom} (${odu.droite.nom} / ${odu.gauche.nom})`;
+      select.appendChild(opt);
+    });
+  }
+
+  function showStatus(msg, isError = false) {
+    const el = document.getElementById("status-msg");
+    el.textContent = msg;
+    el.className = isError ? "status error" : "status";
+    setTimeout(() => {
+      if (el.textContent === msg) el.textContent = "";
+    }, 4500);
+  }
+
+  // Événements
+  document.getElementById("btn-cast").addEventListener("click", () => {
+    const randomIdx = Math.floor(Math.random() * corpus256.length);
+    const theme = document.getElementById("theme-input").value;
+    if (theme.trim()) {
+      corpus256[randomIdx].poeme = composePoem(corpus256[randomIdx], theme);
+    }
+    renderOdu(randomIdx);
+    showStatus("Nouvel Odu tiré sur l'Ọpọ́n Ifá.");
+  });
+
+  document.getElementById("odu-select").addEventListener("change", (e) => {
+    renderOdu(Number(e.target.value));
+  });
+
+  document.getElementById("btn-generate").addEventListener("click", () => {
+    const theme = document.getElementById("theme-input").value;
+    const odu = corpus256[currentIndex];
+    odu.poeme = composePoem(odu, theme);
+    document.getElementById("poem-editor").value = odu.poeme;
+    showStatus("Poème régénéré à partir des deux jambes de l'Odu.");
+  });
+
+  document.getElementById("btn-save").addEventListener("click", () => {
+    const odu = corpus256[currentIndex];
+    odu.yoruba = document.getElementById("yoruba-verse").value;
+    odu.poeme = document.getElementById("poem-editor").value;
+
+    try {
+      const toSave = corpus256.map(o => ({ id: o.id, nom: o.nom, yoruba: o.yoruba, poeme: o.poeme }));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+      showStatus(`Poème enregistré pour ${odu.nom} dans votre navigateur.`);
+    } catch (e) {
+      showStatus("Sauvegarde locale bloquée par votre navigateur. Utilisez l'export JSON.", true);
+    }
+  });
+
+  document.getElementById("btn-copy").addEventListener("click", function() {
+    const odu = corpus256[currentIndex];
+    const fullText = `${odu.nom.toUpperCase()}\n${document.getElementById("yoruba-verse").value}\n\n${document.getElementById("poem-editor").value}`;
+    copyTextUniversally(fullText, this, "📋 Copier le poème");
+  });
+
+  document.getElementById("btn-copy-yoruba").addEventListener("click", function() {
+    const yorubaText = document.getElementById("yoruba-verse").value;
+    copyTextUniversally(yorubaText, this, "📋 Copier l'invocation");
+  });
+
+  document.getElementById("btn-export").addEventListener("click", () => {
+    const exportData = corpus256.map(o => ({
+      id: o.id,
+      nom: o.nom,
+      type: o.type,
+      droite: o.droite.nom,
+      gauche: o.gauche.nom,
+      lignes_droite: o.droite.lignes,
+      lignes_gauche: o.gauche.lignes,
+      ese_yoruba: o.yoruba,
+      poeme_fr: o.poeme
+    }));
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "poemes_256_odu_ifa.json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showStatus("Fichier JSON des 256 poèmes téléchargé.");
+  });
+
+  // Initialisation
+  loadCorpus();
+  populateSelect();
+  renderOdu(0);
+</script>
+</body>
+</html>
