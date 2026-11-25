@@ -646,6 +646,35 @@
   // Initialisation
   loadCorpus();
   populateSelect();
+    // Lecture des paramètres envoyés par oracle-complet-yiking
+  function initFromUrlParams() {
+    const params = new URLSearchParams(window.location.search);
+    const oduParam = parseInt(params.get("odu"), 10);
+    const hexParam = parseInt(params.get("hex"), 10);
+    const mutParam = parseInt(params.get("mut"), 10);
+
+    // Vérifie que l'Odu demandé est bien compris entre 1 et 256
+    if (!isNaN(oduParam) && oduParam >= 1 && oduParam <= 256) {
+      const targetIndex = oduParam - 1; // Conversion ID (1..256) -> Index tableau (0..255)
+      renderOdu(targetIndex);
+
+      // Si l'hexagramme et le nombre de traits mutables sont fournis, on affiche l'origine du lien
+      if (!isNaN(hexParam) && !isNaN(mutParam)) {
+        const statusEl = document.getElementById("status-msg");
+        if (statusEl) {
+          statusEl.textContent = `Liaison Yi King : Hexagramme N°${hexParam} avec ${mutParam} trait(s) mutable(s) → Odu N°${oduParam}.`;
+        }
+      }
+      return true;
+    }
+    return false;
+  }
+
+  // Remplacez l'appel final renderOdu(0) par :
+  if (!initFromUrlParams()) {
+    renderOdu(0);
+  }
+
   renderOdu(0);
 </script>
 </body>
